@@ -8,7 +8,6 @@ fn play_turn(u32: player) {
     draw_board(); // paint the UI
     if check_gameover() {
         //distribute leftover points and count points, then declare winner
-        winner = player;
     }
 }
 

@@ -18,6 +18,8 @@ This board would look like this:
 [    ] ( 1) ( 1) ( 5) (10) ( 2) ( 8) [    ]
          A    B    C    D    E    F   STORE
 
+To get position of the hole directly opposite, use this operation:
+opposite hole index = 5 - current hole index
 
 --------------------------------------------------------------------------------
 To start, create a single Rust program that does this all in the terminal.
@@ -36,7 +38,7 @@ If you run into your opponent's store, skip it.
 2. If the last piece you drop is in your own store, you get a free turn.
 3. If the last piece you drop is in an empty hole on your side, you capture that piece and any pieces in the hole directly opposite.
 4. Always place all captured pieces in your store.
- 
+
 Winning the game
 The game ends when all six spaces on one side of the Mancala board are empty.
 The player who still has pieces on his side of the board when the game ends captures all of those pieces.
