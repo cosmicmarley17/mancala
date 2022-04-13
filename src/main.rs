@@ -40,4 +40,7 @@ fn play_turn(player: Turn, p1_board: &mut [u32;7], p2_board: &mut [u32;7]) {
 // paints the board in TUI
 fn draw_board(p1_board: &[u32;7], p2_board: &[u32;7]) {
 
+fn check_gameover() -> bool {
+    println!("TODO: write check_gameover()");
+    false
 }
