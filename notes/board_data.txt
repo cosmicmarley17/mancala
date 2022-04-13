@@ -18,7 +18,7 @@ p2_store: 5
 
 This board would look like this:
 [    ] ( 1) ( 0) ( 8) ( 3) ( 0) ( 0) [    ]
-|  5 |                               |  4 |
+[  5 ]                               [  4 ]
 [    ] ( 1) ( 1) ( 5) (10) ( 2) ( 8) [    ]
          A    B    C    D    E    F   STORE
 
