@@ -60,14 +60,11 @@ fn draw_board(board: &MancalaBoard) {
     // TODO add a function param for current player, so the opposite side is drawn accordingly
     // rather than hardcoded from player 1's POV
 
-    println!("TODO: write draw_board()");
-    println!("");
-    //print opposite player's side
-    // println!("[    ] ({}) ({}) ({}) ({}) ({}) ({}) [    ]", );
+    //print opposite player's side (in reverse because it's the opposite side of the board)
     print!("[    ] ");
-    for i in board.p2_board {
+    for i in board.p2_board.iter().rev() {
         let pit = i;
-        let pit = pad_number(pit);
+        let pit = pad_number(*pit);
         print!("({}) ", pit)
     }
     print!("[    ] \n");
@@ -78,12 +75,16 @@ fn draw_board(board: &MancalaBoard) {
     println!("[ {} ]                               [ {} ]", store_left, store_right);
 
     //print current player's side
-    // println!("[    ] ({}) ({}) ({}) ({}) ({}) ({}) [    ]");
+    print!("[    ] ");
+    for i in board.p1_board {
+        let pit = i;
+        let pit = pad_number(pit);
+        print!("({}) ", pit)
+    }
+    print!("[    ] \n");
 
     //print bottom (board labels)
-    // println!("         A    B    C    D    E    F   STORE");
-
-    // println!("{:?}", board.p1_board[2]);
+    println!("         A    B    C    D    E    F   STORE");
 }
 
 // converts a number to a string and
