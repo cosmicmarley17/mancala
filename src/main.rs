@@ -60,6 +60,18 @@ fn draw_board(board: &MancalaBoard) {
     // TODO add a function param for current player, so the opposite side is drawn accordingly
     // rather than hardcoded from player 1's POV
 
+    clearscreen::clear().unwrap(); // clear screen
+
+    //ascii text art
+    println!("    __  __                       _       ");
+    println!("   |  \\/  |                     | |      ");
+    println!("   | \\  / | __ _ _ __   ___ __ _| | __ _ ");
+    println!("   | |\\/| |/ _` | '_ \\ / __/ _` | |/ _` |");
+    println!("   | |  | | (_| | | | | (_| (_| | | (_| |");
+    println!("   |_|  |_|\\__,_|_| |_|\\___\\__,_|_|\\__,_|");
+    println!("--*--*--*--*--*--*--*--*--*--*--*--*--*--*--");
+    println!();
+
     //print opposite player's side (in reverse because it's the opposite side of the board)
     print!("[    ] ");
     for i in board.p2_board.iter().rev() {
