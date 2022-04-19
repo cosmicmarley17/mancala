@@ -48,7 +48,7 @@ impl MancalaBoard {
 }
 
 fn play_turn(current_player: Player, board: &mut MancalaBoard, winner: &mut u32) {
-    draw_board(&board); // paint the TUI
+    draw_board(&board, &current_player); // paint the TUI
 
     // gets user input for which pit to move, and retries if an error occurs
     let move_input: Move = loop {
@@ -88,12 +88,32 @@ fn play_turn(current_player: Player, board: &mut MancalaBoard, winner: &mut u32)
 }
 
 // paints the board in TUI
-fn draw_board(board: &MancalaBoard) {
-    // TODO add a function param for current player, so the opposite side is drawn accordingly
-    // rather than hardcoded from player 1's POV
+fn draw_board(board: &MancalaBoard, current_player: &Player) {
+    // map components of board to variables to correctly depict player perspective
+    let row_near;
+    let row_far;
+    let store_right;
+    let store_left;
+    let player_name; // string representation of the current player
+    match current_player {
+        Player::P1 => {
+            row_near = board.p1_board;
+            row_far = board.p2_board;
+            store_right = board.p1_store;
+            store_left = board.p2_store;
+            player_name = String::from("Player One");
+        },
+        Player::P2 => {
+            row_near = board.p2_board;
+            row_far = board.p1_board;
+            store_right = board.p2_store;
+            store_left = board.p1_store;
+            player_name = String::from("Player Two");
+        },
+        _ => panic!("LOGIC ERROR: fn draw_board(): current_player is not a valid variant of Player!"),
+    }
 
     clearscreen::clear().unwrap(); // clear screen
-
     //ascii text art
     println!("    __  __                       _       ");
     println!("   |  \\/  |                     | |      ");
@@ -103,10 +123,12 @@ fn draw_board(board: &MancalaBoard) {
     println!("   |_|  |_|\\__,_|_| |_|\\___\\__,_|_|\\__,_|");
     println!("--*--*--*--*--*--*--*--*--*--*--*--*--*--*--");
     println!();
+    println!("{}'s turn:", player_name);
+    println!();
 
     //print opposite player's side (in reverse because it's the opposite side of the board)
     print!("[    ] ");
-    for i in board.p2_board.iter().rev() {
+    for i in row_far.iter().rev() {
         let pit = i;
         let pit = pad_number(*pit);
         print!("({}) ", pit)
@@ -114,13 +136,13 @@ fn draw_board(board: &MancalaBoard) {
     print!("[    ] \n");
 
     //print middle gap + stores
-    let store_left = pad_number(board.p2_store);
-    let store_right = pad_number(board.p1_store);
+    let store_left = pad_number(store_left);
+    let store_right = pad_number(store_right);
     println!("[ {} ]                               [ {} ]", store_left, store_right);
 
     //print current player's side
     print!("[    ] ");
-    for i in board.p1_board {
+    for i in row_near {
         let pit = i;
         let pit = pad_number(pit);
         print!("({}) ", pit)
@@ -129,6 +151,7 @@ fn draw_board(board: &MancalaBoard) {
 
     //print bottom (board labels)
     println!("         A    B    C    D    E    F   STORE");
+    println!();
 }
 
 // converts a number to a string and
