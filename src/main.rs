@@ -10,6 +10,13 @@ fn main() {
     //     play_turn(Player::P1, &mut board, &mut winner);
     //     play_turn(Player::P2, &mut board, &mut winner);
     // }
+    //
+    // if winner and current_player variables are moved to MancalaBoard, this is what the
+    // driver loop might look like:
+    // while board.winner = None {
+    //     play_turn(&mut board);
+    // }
+
     play_turn(Player::P1, &mut board, &mut winner);    //DEBUG
 }
 
@@ -30,6 +37,8 @@ enum Move {
     F,
 }
 
+// TODO consider if checking for wins and changing current player should occur within the struct
+// and its methods. Should current_player and winner be stored in the struct?
 struct MancalaBoard {
     p1_board: [u32; 6],
     p2_board: [u32; 6],
