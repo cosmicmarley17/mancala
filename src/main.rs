@@ -57,42 +57,49 @@ impl MancalaBoard {
 }
 
 fn play_turn(current_player: Player, board: &mut MancalaBoard, winner: &mut u32) {
-    draw_board(&board, &current_player); // paint the TUI
+    loop {
+        draw_board(&board, &current_player); // paint the TUI
 
-    // gets user input for which pit to move, and retries if an error occurs
-    let move_input: Move = loop {
-        print!("Choose a pit to move: ");
-        io::stdout().flush().expect("ERROR: Failed to flush stdout"); // flush stdout so input is on same line
-        let mut input = String::new(); // creates input variable
-        //read command-line input
-        io::stdin()
-            .read_line(&mut input) // reads input
-            .expect("ERROR: Failed to read line."); // panics with message if error occurs
-        // match and compare input to convert to Move (trim newline)
-        // assigns to Some(Move) if valid input is received, otherwise returns None
-        let move_input = match input.as_str().trim() {
-            "A" | "a" | "1" => Some(Move::A),
-            "B" | "b" | "2" => Some(Move::B),
-            "C" | "c" | "3" => Some(Move::C),
-            "D" | "d" | "4" => Some(Move::D),
-            "E" | "e" | "5" => Some(Move::E),
-            "F" | "f" | "6" => Some(Move::F),
-            _ => None,
+        // gets user input for which pit to move, and retries if an error occurs
+        let move_input: Move = loop {
+            print!("Choose a pit to move: ");
+            io::stdout().flush().expect("ERROR: Failed to flush stdout"); // flush stdout so input is on same line
+            let mut input = String::new(); // creates input variable
+            //read command-line input
+            io::stdin()
+                .read_line(&mut input) // reads input
+                .expect("ERROR: Failed to read line."); // panics with message if error occurs
+            // match and compare input to convert to Move (trim newline)
+            // assigns to Some(Move) if valid input is received, otherwise returns None
+            let move_input = match input.as_str().trim() {
+                "A" | "a" | "1" => Some(Move::A),
+                "B" | "b" | "2" => Some(Move::B),
+                "C" | "c" | "3" => Some(Move::C),
+                "D" | "d" | "4" => Some(Move::D),
+                "E" | "e" | "5" => Some(Move::E),
+                "F" | "f" | "6" => Some(Move::F),
+                _ => None,
+            };
+            if move_input.is_some() {
+                break move_input.unwrap();
+            } else {
+                println!("Invalid move! Enter A,B,C,D,E, or F.\n");
+            }
         };
-        if move_input.is_some() {
-            break move_input.unwrap();
-        } else {
-            println!("Invalid move! Enter A,B,C,D,E, or F.\n");
+        println!("move_input: Move::{:?}", move_input); //DEBUG
+
+
+
+        // check if this turn ends the game
+        if check_gameover() {
+            //distribute leftover points, count store totals, and declare winner
+            println!("TODO: write end-of-game logic");
         }
-    };
-    println!("move_input: Move::{:?}", move_input); //DEBUG
 
-    //TODO Need to check if player gains an extra turn, use another loop
-
-    // check if this turn ends the game
-    if check_gameover() {
-        //distribute leftover points, count store totals, and declare winner
-        println!("TODO: write end-of-game logic");
+        //TODO Need to check if player earns an extra turn (continue loop)
+        let turn_end: bool;
+        turn_end = true;
+        if turn_end {break} // breaks turn loop if turn is over
     }
 }
 
@@ -119,7 +126,6 @@ fn draw_board(board: &MancalaBoard, current_player: &Player) {
             store_left = board.p1_store;
             player_name = String::from("Player Two");
         },
-        _ => panic!("LOGIC ERROR: fn draw_board(): current_player is not a valid variant of Player!"),
     }
 
     clearscreen::clear().unwrap(); // clear screen
