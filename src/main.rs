@@ -2,7 +2,7 @@ use std::io; // for I/O
 use std::io::Write; // for flushing stdout
 
 fn main() {
-    let mut winner = 0; //0 if no winner, 1 if player one, 2 if player 2
+    let mut winner: Option<Player> = None; //0 if no winner, 1 if player one, 2 if player 2
     // let mut board = MancalaBoard::new();
     let mut board = MancalaBoard::new_visual_debug();   //DEBUG
     // Uncomment loop when done debugging
@@ -71,7 +71,7 @@ impl MancalaBoard {
     }
 }
 
-fn play_turn(current_player: Player, mut board: &mut MancalaBoard, winner: &mut u32) {
+fn play_turn(current_player: Player, mut board: &mut MancalaBoard, winner: &mut Option<Player>) {
     loop {
         draw_board(&board, &current_player); // paint the TUI
 
