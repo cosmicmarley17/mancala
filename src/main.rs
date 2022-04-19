@@ -3,7 +3,8 @@ use std::io::Write; // for flushing stdout
 
 fn main() {
     let mut winner = 0; //0 if no winner, 1 if player one, 2 if player 2
-    let mut board = MancalaBoard::new();
+    // let mut board = MancalaBoard::new();
+    let mut board = MancalaBoard::new_visual_debug();   //DEBUG
     // Uncomment loop when done debugging
     // loop {
     //     play_turn(Player::P1, &mut board, &mut winner);
@@ -43,6 +44,14 @@ impl MancalaBoard {
             p2_board: [4, 4, 4, 4, 4, 4],
             p1_store: 0,
             p2_store: 0,
+        }
+    }
+    pub fn new_visual_debug() -> Self {
+        Self {
+            p1_board: [1, 2, 3, 4, 5, 6],
+            p2_board: [1, 2, 3, 4, 5, 6],
+            p1_store: 1,
+            p2_store: 2,
         }
     }
 }
