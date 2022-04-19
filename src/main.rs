@@ -144,14 +144,10 @@ fn draw_board(board: &MancalaBoard, current_player: &Player) {
     }
 
     clearscreen::clear().unwrap(); // clear screen
-    //ascii text art
-    println!("    __  __                       _       ");
-    println!("   |  \\/  |                     | |      ");
-    println!("   | \\  / | __ _ _ __   ___ __ _| | __ _ ");
-    println!("   | |\\/| |/ _` | '_ \\ / __/ _` | |/ _` |");
-    println!("   | |  | | (_| | | | | (_| (_| | | (_| |");
-    println!("   |_|  |_|\\__,_|_| |_|\\___\\__,_|_|\\__,_|");
-    println!("--*--*--*--*--*--*--*--*--*--*--*--*--*--*--");
+
+    println!("/--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--\\");
+    println!("| . . . . . .  M  A  N  C  A  L  A  . . . . . . |");
+    println!("\\--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--/");
     println!();
     println!("{}'s turn:", player_name);
     println!();
