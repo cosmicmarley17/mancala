@@ -38,6 +38,7 @@ struct MancalaBoard {
 }
 
 impl MancalaBoard {
+    // starting board layout
     pub fn new() -> Self {
         Self {
             p1_board: [4, 4, 4, 4, 4, 4],
@@ -54,9 +55,23 @@ impl MancalaBoard {
             p2_store: 2,
         }
     }
+    // move a pit and update numbers
+    pub fn update(self: &mut Self, move_pit: &Move, player: &Player) -> &mut Self {
+        // TODO finish this (work in progress)
+        // TODO match statement for current player
+        let pit_pos = match move_pit {
+            Move::A => 0,
+            Move::B => 1,
+            Move::C => 2,
+            Move::D => 3,
+            Move::E => 4,
+            Move::F => 5,
+        };
+        return self;
+    }
 }
 
-fn play_turn(current_player: Player, board: &mut MancalaBoard, winner: &mut u32) {
+fn play_turn(current_player: Player, mut board: &mut MancalaBoard, winner: &mut u32) {
     loop {
         draw_board(&board, &current_player); // paint the TUI
 
@@ -87,7 +102,7 @@ fn play_turn(current_player: Player, board: &mut MancalaBoard, winner: &mut u32)
             }
         };
         println!("move_input: Move::{:?}", move_input); //DEBUG
-
+        board = board.update(&move_input, &current_player);
 
 
         // check if this turn ends the game
