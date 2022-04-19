@@ -6,15 +6,14 @@ fn main() {
     let mut board = MancalaBoard::new();
     // Uncomment loop when done debugging
     // loop {
-    //     play_turn(Turn::P1, &mut board, &mut winner);
-    //     play_turn(Turn::P2, &mut board, &mut winner);
+    //     play_turn(Player::P1, &mut board, &mut winner);
+    //     play_turn(Player::P2, &mut board, &mut winner);
     // }
-    play_turn(Turn::P1, &mut board, &mut winner);    //DEBUG
+    play_turn(Player::P1, &mut board, &mut winner);    //DEBUG
 }
 
-// player whose turn it is
-// hmm do I need to make this a more general
-enum Turn {
+// used to identify a player. Variants indicate Player One (P1) or Player Two (P2)
+enum Player {
     P1,
     P2,
 }
@@ -48,7 +47,7 @@ impl MancalaBoard {
     }
 }
 
-fn play_turn(player: Turn, board: &mut MancalaBoard, winner: &mut u32) {
+fn play_turn(current_player: Player, board: &mut MancalaBoard, winner: &mut u32) {
     draw_board(&board); // paint the TUI
 
     // gets user input for which pit to move, and retries if an error occurs
