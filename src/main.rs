@@ -156,6 +156,9 @@ fn play_turn(current_player: Player, mut board: &mut MancalaBoard, winner: &mut 
         turn_end = true;
         if turn_end {break} // breaks turn loop if turn is over
     }
+    print!("\nPress ENTER to end your turn. ");
+    io::stdout().flush().expect("ERROR: Failed to flush stdout"); // flush stdout so input is on same line
+    let _ = io::stdin().read_line(&mut String::from("")).unwrap();
 }
 
 // paints the board in TUI
