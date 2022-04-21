@@ -6,12 +6,12 @@ fn main() {
     // let mut board = MancalaBoard::new();
     let mut board = MancalaBoard::new_visual_debug();   //DEBUG
     // Uncomment loop when done debugging
-    // loop {
-    //     play_turn(Player::P1, &mut board, &mut winner);
-    //     play_turn(Player::P2, &mut board, &mut winner);
-    // }
-    //
-    play_turn(Player::P1, &mut board, &mut winner);    //DEBUG
+    loop {
+        play_turn(Player::P1, &mut board, &mut winner);
+        play_turn(Player::P2, &mut board, &mut winner);
+    }
+
+    // play_turn(Player::P1, &mut board, &mut winner);    //DEBUG
 }
 
 // used to identify a player. Variants indicate Player One (P1) or Player Two (P2)
@@ -66,7 +66,27 @@ impl MancalaBoard {
     /// * `player` - the player who is making the move
     pub fn update(self: &mut Self, move_pit: &Move, player: &Player) -> &mut Self {
         // TODO finish this (work in progress)
-        // TODO match statement for current player
+
+        // map board data to relative variables depending on the current player
+        let row_player;
+        let row_opponent;
+        let store_player;
+        let store_opponent;
+        match player {
+            Player::P1 => {
+                row_player = &mut self.p1_board;
+                row_opponent = &mut self.p2_board;
+                store_player = &mut self.p1_store;
+                store_opponent = &mut self.p2_store;
+            },
+            Player::P2 => {
+                row_player = &mut self.p2_board;
+                row_opponent = &mut self.p1_board;
+                store_player = &mut self.p2_store;
+                store_opponent = &mut self.p1_store;
+            },
+        }
+
         let pit_pos = match move_pit {
             Move::A => 0,
             Move::B => 1,
@@ -75,6 +95,10 @@ impl MancalaBoard {
             Move::E => 4,
             Move::F => 5,
         };
+        // empty the pit's contents into a "hand" to redistribute
+        let hand = row_player[pit_pos];
+        row_player[pit_pos] = 0;
+
         return self;
     }
 }
