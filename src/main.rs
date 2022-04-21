@@ -116,7 +116,15 @@ fn play_turn(current_player: Player, mut board: &mut MancalaBoard, winner: &mut 
         // check if this turn ends the game
         if check_gameover() {
             //distribute leftover points, count store totals, and declare winner
-            println!("TODO: write end-of-game logic");
+            if board.p1_store > board.p2_store {
+                *winner = Some(Player::P1);
+                break;
+            } else if board.p1_store < board.p2_store {
+                *winner = Some(Player::P2);
+                break;
+            } else {
+                *winner = None;
+            }
         }
 
         //TODO Need to check if player earns an extra turn (continue loop)
@@ -201,5 +209,6 @@ fn pad_number(num: u32) -> String {
 
 fn check_gameover() -> bool {
     //TODO: write check_gameover()
+    // Should this be a MancalaBoard method????
     false
 }
