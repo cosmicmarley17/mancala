@@ -2,9 +2,9 @@ use std::io; // for I/O
 use std::io::Write; // for flushing stdout
 
 fn main() {
-    let mut winner: Option<Player> = None; //0 if no winner, 1 if player one, 2 if player 2
-    // let mut board = MancalaBoard::new();
-    let mut board = MancalaBoard::new_visual_debug();   //DEBUG
+    let mut winner: Option<Player> = None;
+    let mut board = MancalaBoard::new();
+    // let mut board = MancalaBoard::new_visual_debug();   //DEBUG
     // Uncomment loop when done debugging
     loop {
         play_turn(Player::P1, &mut board, &mut winner);
@@ -58,12 +58,11 @@ impl MancalaBoard {
         }
     }
     /// Move a pit's contents and update board data
-    ///
     /// # Arguments
-    ///
     /// * `self` - the MancalaBoard to update
     /// * `move_pit` - which pit the player has chosen to move
     /// * `player` - the player who is making the move
+    // TODO consider returning Result, to reject moves that move empty pits
     pub fn update(self: &mut Self, move_pit: &Move, player: &Player) -> &mut Self {
         // TODO finish this (work in progress)
 
@@ -96,10 +95,35 @@ impl MancalaBoard {
             Move::F => 5,
         };
         // empty the pit's contents into a "hand" to redistribute
-        let hand = row_player[pit_pos];
+        let mut hand = row_player[pit_pos];
         row_player[pit_pos] = 0;
 
-        return self;
+        // distribute hand across player's row, starting at the pit to the right of the chosen pit
+        for (index, pit) in row_player.iter_mut().enumerate() {
+            if hand == 0 {return self}
+            if index <= pit_pos {continue}   // skip this step if selected pit is to the right of current i value
+            *pit += 1;
+            hand -= 1;
+        }
+        // distribute remainder of hand around the board, depositing a piece in the
+        // move-making player's store at the appropriate point
+        loop {
+            if hand > 0 {
+                *store_player += 1;
+                hand -= 1;
+            } else {return self}
+            for pit in row_opponent.iter_mut() {
+                if hand == 0 {return self}
+                *pit += 1;
+                hand -= 1;
+            }
+            for pit in row_player.iter_mut() {
+                if hand == 0 {return self}
+                *pit += 1;
+                hand -= 1;
+            }
+        }
+
     }
 }
 
@@ -135,7 +159,7 @@ fn play_turn(current_player: Player, mut board: &mut MancalaBoard, winner: &mut 
         };
         println!("move_input: Move::{:?}", move_input); //DEBUG
         board = board.update(&move_input, &current_player);
-
+        draw_board(&board, &current_player); // update the TUI
 
         // check if this turn ends the game
         if check_gameover() {
@@ -156,7 +180,7 @@ fn play_turn(current_player: Player, mut board: &mut MancalaBoard, winner: &mut 
         turn_end = true;
         if turn_end {break} // breaks turn loop if turn is over
     }
-    print!("\nPress ENTER to end your turn. ");
+    print!("Press ENTER to end your turn. ");
     io::stdout().flush().expect("ERROR: Failed to flush stdout"); // flush stdout so input is on same line
     let _ = io::stdin().read_line(&mut String::from("")).unwrap();
 }
