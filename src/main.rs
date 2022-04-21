@@ -70,19 +70,16 @@ impl MancalaBoard {
         let row_player;
         let row_opponent;
         let store_player;
-        let store_opponent;
         match player {
             Player::P1 => {
                 row_player = &mut self.p1_board;
                 row_opponent = &mut self.p2_board;
                 store_player = &mut self.p1_store;
-                store_opponent = &mut self.p2_store;
             },
             Player::P2 => {
                 row_player = &mut self.p2_board;
                 row_opponent = &mut self.p1_board;
                 store_player = &mut self.p2_store;
-                store_opponent = &mut self.p1_store;
             },
         }
 
