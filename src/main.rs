@@ -11,12 +11,6 @@ fn main() {
     //     play_turn(Player::P2, &mut board, &mut winner);
     // }
     //
-    // if winner and current_player variables are moved to MancalaBoard, this is what the
-    // driver loop might look like:
-    // while board.winner = None {
-    //     play_turn(&mut board);
-    // }
-
     play_turn(Player::P1, &mut board, &mut winner);    //DEBUG
 }
 
@@ -37,8 +31,6 @@ enum Move {
     F,
 }
 
-// TODO consider if checking for wins and changing current player should occur within the struct
-// and its methods. Should current_player and winner be stored in the struct?
 struct MancalaBoard {
     p1_board: [u32; 6],
     p2_board: [u32; 6],
@@ -47,7 +39,8 @@ struct MancalaBoard {
 }
 
 impl MancalaBoard {
-    // starting board layout
+    /// Creates a new MancalaBoard with its values initialized to a new game layout according to
+    /// the game rules of mancala.
     pub fn new() -> Self {
         Self {
             p1_board: [4, 4, 4, 4, 4, 4],
@@ -64,7 +57,13 @@ impl MancalaBoard {
             p2_store: 2,
         }
     }
-    // move a pit and update numbers
+    /// Move a pit's contents and update board data
+    ///
+    /// # Arguments
+    ///
+    /// * `self` - the MancalaBoard to update
+    /// * `move_pit` - which pit the player has chosen to move
+    /// * `player` - the player who is making the move
     pub fn update(self: &mut Self, move_pit: &Move, player: &Player) -> &mut Self {
         // TODO finish this (work in progress)
         // TODO match statement for current player

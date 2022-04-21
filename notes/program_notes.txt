@@ -25,6 +25,18 @@ This board would look like this:
 To get position of the hole directly opposite, use this operation:
 opposite hole index = 5 - current hole index
 
+---
+Thoughts on program organization:
+Need to consider if checking for wins and changing current player should occur within the struct and its methods.
+Should current_player and winner be stored in the struct?
+
+If winner and current_player variables are moved to MancalaBoard, this is what the driver loop might look like:
+```
+while board.winner = None {
+    play_turn(&mut board);
+}
+```
+because board stores those variables, they don't need to be passed separately.
 --------------------------------------------------------------------------------
 To start, create a single Rust program that does this all in the terminal.
 
