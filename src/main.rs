@@ -107,22 +107,23 @@ impl MancalaBoard {
         }
         // distribute remainder of hand around the board, depositing a piece in the
         // move-making player's store at the appropriate point
-        loop {
+        'outer: loop {
             if hand > 0 {
                 *store_player += 1;
                 hand -= 1;
-            } else {return self}
+            } else {break 'outer}
             for pit in row_opponent.iter_mut() {
-                if hand == 0 {return self}
+                if hand == 0 {break 'outer}
                 *pit += 1;
                 hand -= 1;
             }
             for pit in row_player.iter_mut() {
-                if hand == 0 {return self}
+                if hand == 0 {break 'outer}
                 *pit += 1;
                 hand -= 1;
             }
         }
+        return self;
 
     }
 }
