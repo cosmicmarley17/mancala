@@ -2,131 +2,13 @@ use std::io; // for I/O
 use std::io::Write; // for flushing stdout
 
 fn main() {
-    let mut winner: Option<Player> = None;
     let mut board = MancalaBoard::new();
     // let mut board = MancalaBoard::new_visual_debug();   //DEBUG
-    // Uncomment loop when done debugging
-    loop {
-        play_turn(Player::P1, &mut board, &mut winner);
-        play_turn(Player::P2, &mut board, &mut winner);
-    }
-
-    // play_turn(Player::P1, &mut board, &mut winner);    //DEBUG
-}
-
-// used to identify a player. Variants indicate Player One (P1) or Player Two (P2)
-enum Player {
-    P1,
-    P2,
-}
-
-// which pit the player has selected to move
-#[derive(Debug)]
-enum Move {
-    A,
-    B,
-    C,
-    D,
-    E,
-    F,
-}
-
-struct MancalaBoard {
-    p1_board: [u32; 6],
-    p2_board: [u32; 6],
-    p1_store: u32,
-    p2_store: u32,
-}
-
-impl MancalaBoard {
-    /// Creates a new MancalaBoard with its values initialized to a new game layout according to
-    /// the game rules of mancala.
-    pub fn new() -> Self {
-        Self {
-            p1_board: [4, 4, 4, 4, 4, 4],
-            p2_board: [4, 4, 4, 4, 4, 4],
-            p1_store: 0,
-            p2_store: 0,
-        }
-    }
-    pub fn new_visual_debug() -> Self {
-        Self {
-            p1_board: [1, 2, 3, 4, 5, 6],
-            p2_board: [7, 8, 9, 10, 11, 12],
-            p1_store: 1,
-            p2_store: 2,
-        }
-    }
-    /// Move a pit's contents and update board data
-    /// # Arguments
-    /// * `self` - the MancalaBoard to update
-    /// * `move_pit` - which pit the player has chosen to move
-    /// * `player` - the player who is making the move
-    // TODO consider returning Result, to reject moves that move empty pits
-    pub fn update(self: &mut Self, move_pit: &Move, player: &Player) -> &mut Self {
-        // TODO finish this (work in progress)
-
-        // map board data to relative variables depending on the current player
-        let row_player;
-        let row_opponent;
-        let store_player;
-        match player {
-            Player::P1 => {
-                row_player = &mut self.p1_board;
-                row_opponent = &mut self.p2_board;
-                store_player = &mut self.p1_store;
-            },
-            Player::P2 => {
-                row_player = &mut self.p2_board;
-                row_opponent = &mut self.p1_board;
-                store_player = &mut self.p2_store;
-            },
-        }
-
-        let pit_pos = match move_pit {
-            Move::A => 0,
-            Move::B => 1,
-            Move::C => 2,
-            Move::D => 3,
-            Move::E => 4,
-            Move::F => 5,
-        };
-        // empty the pit's contents into a "hand" to redistribute
-        let mut hand = row_player[pit_pos];
-        row_player[pit_pos] = 0;
-
-        // distribute hand across player's row, starting at the pit to the right of the chosen pit
-        for (index, pit) in row_player.iter_mut().enumerate() {
-            if hand == 0 {return self}
-            if index <= pit_pos {continue}   // skip this step if selected pit is to the right of current i value
-            *pit += 1;
-            hand -= 1;
-        }
-        // distribute remainder of hand around the board, depositing a piece in the
-        // move-making player's store at the appropriate point
-        'outer: loop {
-            if hand > 0 {
-                *store_player += 1;
-                hand -= 1;
-            } else {break 'outer}
-            for pit in row_opponent.iter_mut() {
-                if hand == 0 {break 'outer}
-                *pit += 1;
-                hand -= 1;
-            }
-            for pit in row_player.iter_mut() {
-                if hand == 0 {break 'outer}
-                *pit += 1;
-                hand -= 1;
-            }
-        }
-        return self;
-
-    }
-}
-
-fn play_turn(current_player: Player, mut board: &mut MancalaBoard, winner: &mut Option<Player>) {
-    loop {
+    let mut game_state = MoveResult::Continuing(Player::P1); // P1 takes first turn
+    // TODO make this conditional less verbose if possible?
+    while game_state == MoveResult::Continuing(Player::P1) ||
+        game_state == MoveResult::Continuing(Player::P2) {
+        let current_player = board.turn.to_owned();
         draw_board(&board, &current_player); // paint the TUI
 
         // gets user input for which pit to move, and retries if an error occurs
@@ -152,46 +34,174 @@ fn play_turn(current_player: Player, mut board: &mut MancalaBoard, winner: &mut 
             if move_input.is_some() {
                 break move_input.unwrap();
             } else {
-                println!("Invalid move! Enter A,B,C,D,E, or F.\n");
+                println!("Invalid input! Enter A,B,C,D,E, or F.\n");
             }
         };
+
         println!("move_input: Move::{:?}", move_input); //DEBUG
-        board = board.update(&move_input, &current_player);
+        game_state = board.update(&move_input);
         draw_board(&board, &current_player); // update the TUI
 
-        // check if this turn ends the game
-        if check_gameover() {
-            //distribute leftover points, count store totals, and declare winner
-            if board.p1_store > board.p2_store {
-                *winner = Some(Player::P1);
-                break;
-            } else if board.p1_store < board.p2_store {
-                *winner = Some(Player::P2);
-                break;
-            } else {
-                *winner = None;
-            }
+        println!("DEBUG: game_state: {:?}", game_state);
+        print!("Press ENTER to end your turn. ");
+        io::stdout().flush().expect("ERROR: Failed to flush stdout"); // flush stdout so input is on same line
+        let _ = io::stdin().read_line(&mut String::from("")).unwrap();
+    }
+
+}
+
+// used to identify a player. Variants indicate Player One (P1) or Player Two (P2)
+#[derive(PartialEq,Debug,Clone)]
+enum Player {
+    P1,
+    P2,
+}
+
+// The state of the game as the result of a move
+#[derive(PartialEq,Debug)]
+enum MoveResult {
+    Won(Player),    // which player has won
+    Continuing(Player), // which player is up next (can be same player in case of bonus turns)
+    Draw,   // game is over and scores are tied
+    Invalid,    // last move attempt was invalid (empty pit selected)
+}
+
+// which pit the player has selected to move
+#[derive(Debug)]
+enum Move {
+    A,
+    B,
+    C,
+    D,
+    E,
+    F,
+}
+
+struct MancalaBoard {
+    p1_board: [u32; 6],
+    p2_board: [u32; 6],
+    p1_store: u32,
+    p2_store: u32,
+    turn: Player,
+}
+
+impl MancalaBoard {
+    /// Creates a new MancalaBoard with its values initialized to a new game layout according to
+    /// the game rules of mancala.
+    pub fn new() -> Self {
+        Self {
+            p1_board: [4, 4, 4, 4, 4, 4],
+            p2_board: [4, 4, 4, 4, 4, 4],
+            p1_store: 0,
+            p2_store: 0,
+            turn: Player::P1,
+        }
+    }
+    pub fn new_visual_debug() -> Self {
+        Self {
+            p1_board: [1, 2, 3, 4, 5, 6],
+            p2_board: [7, 8, 9, 10, 11, 12],
+            p1_store: 1,
+            p2_store: 2,
+            turn: Player::P1,
+        }
+    }
+    /// Move a pit's contents and update board data
+    /// # Arguments
+    /// * `self` - the MancalaBoard to update
+    /// * `move_pit` - which pit the player has chosen to move
+    /// * `player` - the player who is making the move
+    // TODO consider returning Result, to reject moves that move empty pits
+    pub fn update(self: &mut Self, move_pit: &Move) -> MoveResult {
+        // TODO finish this (work in progress)
+
+        // map board data to relative variables depending on the current player
+        let row_player;
+        let row_opponent;
+        let store_player;
+        match self.turn {
+            Player::P1 => {
+                row_player = &mut self.p1_board;
+                row_opponent = &mut self.p2_board;
+                store_player = &mut self.p1_store;
+            },
+            Player::P2 => {
+                row_player = &mut self.p2_board;
+                row_opponent = &mut self.p1_board;
+                store_player = &mut self.p2_store;
+            },
         }
 
-        //TODO Need to check if player earns an extra turn (continue loop)
-        let turn_end: bool;
-        turn_end = true;
-        if turn_end {break} // breaks turn loop if turn is over
+        let pit_pos = match move_pit {
+            Move::A => 0,
+            Move::B => 1,
+            Move::C => 2,
+            Move::D => 3,
+            Move::E => 4,
+            Move::F => 5,
+        };
+        // empty the pit's contents into a "hand" to redistribute
+        let mut hand = row_player[pit_pos];
+        if hand == 0 { return MoveResult::Invalid; }
+        row_player[pit_pos] = 0;
+
+        // distribute hand across player's row, starting at the pit to the right of the chosen pit
+        for (index, pit) in row_player.iter_mut().enumerate() {
+            if hand == 0 {break}
+            if index <= pit_pos {continue}   // skip this step if selected pit is to the right of current i value
+            *pit += 1;
+            hand -= 1;
+        }
+        // distribute remainder of hand around the board, depositing a piece in the
+        // move-making player's store at the appropriate point
+        'outer: loop {
+            if hand > 0 {
+                *store_player += 1;
+                hand -= 1;
+            } else {break 'outer}
+            for pit in row_opponent.iter_mut() {
+                if hand == 0 {break 'outer}
+                *pit += 1;
+                hand -= 1;
+            }
+            for pit in row_player.iter_mut() {
+                if hand == 0 {break 'outer}
+                *pit += 1;
+                hand -= 1;
+            }
+        }
+        // if is_row_empty(row_player) || is_row_empty(row_opponent) {
+        //
+        // }
+        // TODO check for bonus turns
+        if self.turn == Player::P1 {
+            self.turn = Player::P2;
+            return MoveResult::Continuing(Player::P2);
+        } else {
+            self.turn = Player::P1;
+            return MoveResult::Continuing(Player::P1);
+        }
+
     }
-    print!("Press ENTER to end your turn. ");
-    io::stdout().flush().expect("ERROR: Failed to flush stdout"); // flush stdout so input is on same line
-    let _ = io::stdin().read_line(&mut String::from("")).unwrap();
+    fn is_row_empty(row: &[u32]) -> bool {
+        for i in row.iter() {
+            if *i != 0 { return false; }
+        }
+        true
+    }
 }
 
 // paints the board in TUI
-fn draw_board(board: &MancalaBoard, current_player: &Player) {
+// board: the MancalaBoard to display
+// perspective: from which player's visual perspective the board is shown
+fn draw_board(board: &MancalaBoard, perspective: &Player) {
     // map components of board to variables to correctly depict player perspective
     let row_near;
     let row_far;
     let store_right;
     let store_left;
     let player_name; // string representation of the current player
-    match current_player {
+    match perspective {
         Player::P1 => {
             row_near = board.p1_board;
             row_far = board.p2_board;
@@ -254,10 +264,4 @@ fn pad_number(num: u32) -> String {
     else {
         return " ".to_string() + &num.to_string();
     }
-}
-
-fn check_gameover() -> bool {
-    //TODO: write check_gameover()
-    // Should this be a MancalaBoard method????
-    false
 }
