@@ -44,7 +44,7 @@ fn main() {
         game_state = board.update(&move_input);
         draw_board(&board, &current_player); // update the TUI
 
-        println!("DEBUG: game_state: {:?}", game_state);
+        // println!("DEBUG: game_state: {:?}", game_state);
         print!("Press ENTER to end your turn. ");
         io::stdout().flush().expect("ERROR: Failed to flush stdout"); // flush stdout so input is on same line
         let _ = io::stdin().read_line(&mut String::from("")).unwrap();
@@ -104,7 +104,6 @@ impl MancalaBoard {
     /// * `self` - the MancalaBoard to update
     /// * `move_pit` - which pit the player has chosen to move
     /// * `player` - the player who is making the move
-    // TODO consider returning Result, to reject moves that move empty pits
     pub fn update(self: &mut Self, move_pit: &Move) -> MoveResult {
         // TODO finish this (work in progress)
 
@@ -133,14 +132,19 @@ impl MancalaBoard {
             Move::E => 4,
             Move::F => 5,
         };
+        if row_player[pit_pos] == 0 { return MoveResult::Invalid; }    // invalid move if selected pit is empty
         // empty the pit's contents into a "hand" to redistribute
         let mut hand = row_player[pit_pos];
-        if hand == 0 { return MoveResult::Invalid; }
         row_player[pit_pos] = 0;
+        // which position in player's row is the final piece dropped (None if not in player's row)
+        let mut end_home_pos: Option<usize> = None;
 
         // distribute hand across player's row, starting at the pit to the right of the chosen pit
         for (index, pit) in row_player.iter_mut().enumerate() {
-            if hand == 0 {break}
+            if hand == 0 {
+                end_home_pos = Some(index);
+                break;
+            }
             if index <= pit_pos {continue}   // skip this step if selected pit is to the right of current i value
             *pit += 1;
             hand -= 1;
@@ -157,16 +161,22 @@ impl MancalaBoard {
                 *pit += 1;
                 hand -= 1;
             }
-            for pit in row_player.iter_mut() {
-                if hand == 0 {break 'outer}
+            for (index, pit) in row_player.iter_mut().enumerate() {
+                if hand == 0 {
+                    end_home_pos = Some(index);
+                    break 'outer;
+                }
                 *pit += 1;
                 hand -= 1;
             }
         }
+        // TODO check for game over
         // if is_row_empty(row_player) || is_row_empty(row_opponent) {
-        //
+        //     // award remaining pieces and tally scores
         // }
         // TODO check for bonus turns
+        // TODO check for capturing
+        // if continuing to next player's turn:
         if self.turn == Player::P1 {
             self.turn = Player::P2;
             return MoveResult::Continuing(Player::P2);
@@ -181,6 +191,10 @@ impl MancalaBoard {
             if *i != 0 { return false; }
         }
         true
+    }
+    // returns index number of pit opposite in opponent's row
+    fn opposite_pit_pos(pit: &usize) -> usize {
+        5 - pit
     }
 }
 
