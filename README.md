@@ -2,7 +2,7 @@
 A virtual mancala board game in the terminal, with hot-seat multiplayer. 
 
 ## About
-This project is a work-in-progress and not in a very functional state at the moment. Yes, I have a text file for notetaking tracked in the repo. Come back later for polished, useful software.
+This project is a work-in-progress and not in a very functional state at the moment.
 
 ## Goals for this project
 * My goal for this project in its finalized state is to make it a Rust library crate.
