@@ -4,7 +4,7 @@ use std::io::Write; // for flushing stdout
 mod debug_boards; // extra starting board layouts for debugging purposes
 
 fn main() {
-    let mut board = MancalaBoard::new();
+    let mut board = MancalaBoard::new_game_over_debug();
     // let mut board = MancalaBoard::new_visual_debug();   //DEBUG
     let mut game_state = MoveResult::Continuing(Player::P1); // P1 takes first turn
     // TODO make this conditional less verbose if possible?

@@ -10,4 +10,13 @@ impl MancalaBoard {
             turn: Player::P1,
         }
     }
+    pub fn new_game_over_debug() -> Self {
+        Self {
+            p1_board: [0, 0, 0, 0, 0, 1],
+            p2_board: [1, 0, 0, 0, 0, 0],
+            p1_store: 0,
+            p2_store: 0,
+            turn: Player::P1,
+        }
+    }
 }
