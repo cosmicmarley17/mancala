@@ -1,6 +1,8 @@
 use std::io; // for I/O
 use std::io::Write; // for flushing stdout
 
+mod debug_boards; // extra starting board layouts for debugging purposes
+
 fn main() {
     let mut board = MancalaBoard::new();
     // let mut board = MancalaBoard::new_visual_debug();   //DEBUG
@@ -94,15 +96,6 @@ impl MancalaBoard {
             p2_board: [4, 4, 4, 4, 4, 4],
             p1_store: 0,
             p2_store: 0,
-            turn: Player::P1,
-        }
-    }
-    pub fn new_visual_debug() -> Self {
-        Self {
-            p1_board: [1, 2, 3, 4, 5, 6],
-            p2_board: [7, 8, 9, 10, 11, 12],
-            p1_store: 1,
-            p2_store: 2,
             turn: Player::P1,
         }
     }
