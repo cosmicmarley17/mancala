@@ -53,7 +53,7 @@ fn main() {
 }
 
 // used to identify a player. Variants indicate Player One (P1) or Player Two (P2)
-#[derive(PartialEq,Debug,Clone)]
+#[derive(PartialEq,Debug,Clone,Copy)]
 enum Player {
     P1,
     P2,
@@ -170,13 +170,17 @@ impl MancalaBoard {
                 hand -= 1;
             }
         }
-        // TODO check for game over
-        // if is_row_empty(row_player) || is_row_empty(row_opponent) {
-        //     // award remaining pieces and tally scores
-        // }
         // TODO check for bonus turns
         // TODO check for capturing
+
+        // check for game over
+        if MancalaBoard::is_row_empty(row_player) || MancalaBoard::is_row_empty(row_opponent) {
+            // award remaining pieces and tally scores, then return MoveResult::Won(Player)
+            println!("DEBUG: GAME OVER!");
+            return MoveResult::Won(self.turn);
+        }
         // if continuing to next player's turn:
+        // (this is sloppy shortcut code)
         if self.turn == Player::P1 {
             self.turn = Player::P2;
             return MoveResult::Continuing(Player::P2);
