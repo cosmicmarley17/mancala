@@ -46,7 +46,7 @@ Later, convert this program into a game logic library, and create a frontend app
 OFFICIAL GAME RULES
 
 Play
-The game begins with one player picking up all of the pieces in any one of the holes on his side.
+The game begins with one player picking up all of the pieces in any one of the holes on their side.
 Moving counter-clockwise, the player deposits one of the stones in each hole until the stones run out.
 
 1. If you run into your own store, deposit one piece in it.
@@ -57,5 +57,5 @@ If you run into your opponent's store, skip it.
 
 Winning the game
 The game ends when all six spaces on one side of the Mancala board are empty.
-The player who still has pieces on his side of the board when the game ends captures all of those pieces.
+The player who still has pieces on their side of the board when the game ends captures all of those pieces.
 Count all the pieces in each store. The winner is the player with the most pieces.
